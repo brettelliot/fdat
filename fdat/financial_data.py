@@ -7,12 +7,16 @@ import tempfile
 
 
 class FinancialData(object):
+    """The FinancialData class is gateway to data from all the configured providers.
+
+    """
     def __init__(self):
 
         self._last_call_time = 0
         self._sleep_time = 60 / 5 + 1  # AV allows 5 requests minute
 
         pd.set_option('display.max_columns', None)
+        pd.set_option('display.expand_frame_repr', False)
 
         config = configparser.ConfigParser()
         config.read('../av_config.ini')
