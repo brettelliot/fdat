@@ -115,3 +115,4 @@ cache.sqlite
 # project files
 fdat.db
 fdat_test.db
+av_config.ini

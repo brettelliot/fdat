@@ -1,0 +1,5 @@
+; av_config.ini
+[DEFAULT]
+
+[AV]
+AV_API_KEY = xxxxxxxxxxxxxxxx
