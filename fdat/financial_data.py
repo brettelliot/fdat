@@ -4,9 +4,69 @@ import requests
 import configparser
 import time
 import tempfile
+from .av_prices_fetcher import AVPricesFetcher
+from .no_cache import NoCache
+
+_default_cache = NoCache()
+_default_prices_fetcher = AVPricesFetcher('../av_config.ini')
 
 
 class FinancialData(object):
+    """The FinancialData class is gateway to data from all the configured fetchers.
+
+    """
+
+    def __init__(self, cache=None, prices_fetcher=None):
+        if cache is not None:
+            self._cache = cache
+        else:
+            self._cache = _default_cache
+
+        if prices_fetcher is not None:
+            self._prices_fetcher = prices_fetcher
+        else:
+            self._prices_fetcher = _default_prices_fetcher
+
+    def set_cache(self, cache):
+        if cache is not None:
+            self._cache = cache
+        else:
+            raise TypeError('FinancialData::get_prices requires a Cache.')
+
+    def set_prices_fetcher(self, fetcher):
+        if fetcher is not None:
+            self._prices_fetcher = fetcher
+        else:
+            raise TypeError('FinancialData::get_prices requires a PriceFetcher.')
+
+    def get_prices(self, ticker, start_date_str, end_date_str):
+
+        if end_date_str is None:
+            end_date_str = start_date_str
+
+        if self._prices_fetcher is None:
+            raise TypeError('FinancialData::get_prices requires a PriceFetcher.')
+
+        if self._cache is None:
+            raise TypeError('FinancialData::get_prices requires a Cache.')
+
+        # Create a list of dates strings in the format: YYYY-MM-DD
+        calendar_date_range = pd.date_range(start_date_str, end_date_str)
+        date_list = calendar_date_range.strftime('%Y-%m-%d').tolist()
+
+        # Check the cache to make sure it has data for all the dates in the date range
+        missing_dates = self._cache.check_for_missing_dates(ticker, date_list)
+
+        # If the cache is missing some data, fetch it and add that to the cache.
+        if missing_dates:
+            uncached_prices_df = self._prices_fetcher.get_prices(ticker, start_date_str, end_date_str)
+            self._cache.add_prices(ticker, missing_dates, uncached_prices_df)
+
+        # Return the prices that have been cached.
+        return self._cache.get_prices(ticker, start_date_str, end_date_str)
+
+
+class FinancialData2(object):
     """The FinancialData class is gateway to data from all the configured providers.
 
     """
@@ -33,9 +93,6 @@ class FinancialData(object):
 
     def __del__(self):
         self._conn.close()
-
-    def get(self, date):
-        pass
 
     def _create_connection(self, db_file):
         """ create a database connection to a SQLite database """
