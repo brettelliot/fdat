@@ -3,6 +3,7 @@ from .abstract_daily_prices_fetcher import AbstractDailyPricesFetcher
 from .av_daily_prices_fetcher import AVDailyPricesFetcher
 from .abstract_daily_prices_cache import AbstractDailyPricesCache
 from .no_daily_prices_cache import NoDailyPricesCache
+from .runtime_daily_prices_cache import RuntimeDailyPricesCache
 import pandas as pd
 
 name = 'fdat'
@@ -16,7 +17,8 @@ __all__ = [
     'AbstractDailyPricesFetcher',
     'AVDailyPricesFetcher',
     'AbstractDailyPricesCache',
-    'NoDailyPricesCache'
+    'NoDailyPricesCache',
+    'RuntimeDailyPricesCache'
 ]
 
 

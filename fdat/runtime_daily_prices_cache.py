@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from .abstract_daily_prices_cache import AbstractDailyPricesCache
 from typing import List
 
@@ -11,7 +12,9 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
     """The ``RuntimeDailyPricesCache`` will cache daily price data for the program's lifetime."""
 
     def __init__(self):
-        pass
+
+        # Create the index where the keys will be a string in the format: 'YYYY-MM-DD,ticker'
+        self._keys_df = pd.DataFrame(columns=['keys'])
 
     def check_for_missing_dates(self, ticker: str, dates: List[str]) -> List[str]:
         """Given a list of dates, find any that aren't already cached.
@@ -27,7 +30,14 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
                 The dates from the date_list that are not in the cache.
 
         """
-        pass
+        missing_dates_list = []
+        for date in dates:
+            key = date + ',' + ticker
+            # If the date, ticker pair is not in the index then add the date
+            if not self._keys_df['keys'].str.contains(key).any():
+                missing_dates_list.append(date)
+
+        return missing_dates_list
 
     def add_daily_prices(self, ticker, missing_dates, uncached_prices_df):
         """Just store the prices so that the next call to ``get_daily_prices`` will use them.
