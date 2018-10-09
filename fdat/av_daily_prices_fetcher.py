@@ -1,15 +1,15 @@
-from .abstract_prices_fetcher import AbstractPricesFetcher
+from .abstract_daily_prices_fetcher import AbstractDailyPricesFetcher
 import configparser
 import pandas as pd
 import time
 import requests
 
 __all__ = [
-    'AVPricesFetcher'
+    'AVDailyPricesFetcher'
 ]
 
 
-class AVPricesFetcher(AbstractPricesFetcher):
+class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
 
     def __init__(self, config_file_path):
         self._last_call_time = 0
@@ -22,8 +22,11 @@ class AVPricesFetcher(AbstractPricesFetcher):
         config.read(config_file_path)
         self._av_api_key = config['AV']['AV_API_KEY']
 
-    def get_prices(self, ticker, start_date_str, end_date_str=None):
+    def get_daily_prices(self, ticker, start_date_str, end_date_str=None):
         """Get prices from AlphaVantage as a pandas DataFrame.
+
+        AlphaVantage returns all prices from 1/1/2000 (if available) in one shot. Therefore
+        ``get_daily_prices`` will return everything in order to cache it so it doesn't have to call the AB API aagin.
 
         Args:
             ticker (str):

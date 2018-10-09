@@ -1,14 +1,15 @@
-from .abstract_cache import AbstractCache
+from .abstract_daily_prices_cache import AbstractDailyPricesCache
 
 __all__ = [
-    'NoCache'
+    'NoDailyPricesCache'
 ]
 
 
-class NoCache(AbstractCache):
-    """``NoCache`` is an instance of ``AbstractCache`` that works with ``FinancialData`` but doesn't cache anything.
+class NoDailyPricesCache(AbstractDailyPricesCache):
+    """``NoDailyPricesCache`` is an instance of ``AbstractDailyPricesCache`` that works with \
+    ``FinancialData`` but doesn't cache anything.
 
-    The ``NoCache`` cache is good for testing or making sure you're always using the latest data.
+    The ``NoDailyPricesCache`` cache is good for testing or making sure you're always using the latest data.
 
     """
 
@@ -16,7 +17,8 @@ class NoCache(AbstractCache):
         self._no_cache_df = None
 
     def check_for_missing_dates(self, ticker, date_list):
-        """``NoCache`` doesn't cache anything so just return the dates that are passed in because they are all missing.
+        """``NoDailyPricesCache`` doesn't cache anything so just return the dates that are passed in because \
+        they are all missing.
 
         Args:
             ticker (str):
@@ -31,8 +33,8 @@ class NoCache(AbstractCache):
         """
         return date_list
 
-    def add_prices(self, ticker, missing_dates, uncached_prices_df):
-        """Just store the prices so that the next call to ``get_prices`` will use them.
+    def add_daily_prices(self, ticker, missing_dates, uncached_prices_df):
+        """Just store the prices so that the next call to ``get_daily_prices`` will use them.
 
         Args:
             ticker (str):
@@ -46,8 +48,8 @@ class NoCache(AbstractCache):
         """
         self._no_cache_df = uncached_prices_df
 
-    def get_prices(self, ticker, start_date_str, end_date_str=None):
-        """Returns exactly what was passed into the last call to ``add_prices``
+    def get_daily_prices(self, ticker, start_date_str, end_date_str=None):
+        """Returns exactly what was passed into the last call to ``add_daily_prices``
 
         Args:
             ticker (str):

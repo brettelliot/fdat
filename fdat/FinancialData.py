@@ -4,11 +4,11 @@ import requests
 import configparser
 import time
 import tempfile
-from .av_prices_fetcher import AVPricesFetcher
-from .no_cache import NoCache
+from .av_daily_prices_fetcher import AVDailyPricesFetcher
+from .no_daily_prices_cache import NoDailyPricesCache
 
-_default_cache = NoCache()
-_default_prices_fetcher = AVPricesFetcher('../av_config.ini')
+_default_daily_prices_cache = NoDailyPricesCache()
+_default_daily_prices_fetcher = AVDailyPricesFetcher('../av_config.ini')
 
 
 class FinancialData(object):
@@ -16,54 +16,54 @@ class FinancialData(object):
 
     """
 
-    def __init__(self, cache=None, prices_fetcher=None):
+    def __init__(self, daily_prices_cache=None, daily_prices_fetcher=None):
+        if daily_prices_cache is not None:
+            self._daily_prices_cache = daily_prices_cache
+        else:
+            self._daily_prices_cache = _default_daily_prices_cache
+
+        if daily_prices_fetcher is not None:
+            self._daily_prices_fetcher = daily_prices_fetcher
+        else:
+            self._daily_prices_fetcher = _default_daily_prices_fetcher
+
+    def set_daily_prices_cache(self, cache):
         if cache is not None:
-            self._cache = cache
+            self._daily_prices_cache = cache
         else:
-            self._cache = _default_cache
+            raise TypeError('FinancialData::get_daily_prices requires a Cache.')
 
-        if prices_fetcher is not None:
-            self._prices_fetcher = prices_fetcher
-        else:
-            self._prices_fetcher = _default_prices_fetcher
-
-    def set_cache(self, cache):
-        if cache is not None:
-            self._cache = cache
-        else:
-            raise TypeError('FinancialData::get_prices requires a Cache.')
-
-    def set_prices_fetcher(self, fetcher):
+    def set_daily_prices_fetcher(self, fetcher):
         if fetcher is not None:
-            self._prices_fetcher = fetcher
+            self._daily_prices_fetcher = fetcher
         else:
-            raise TypeError('FinancialData::get_prices requires a PriceFetcher.')
+            raise TypeError('FinancialData::get_daily_prices requires a PriceFetcher.')
 
-    def get_prices(self, ticker, start_date_str, end_date_str):
+    def get_daily_prices(self, ticker, start_date_str, end_date_str):
 
         if end_date_str is None:
             end_date_str = start_date_str
 
-        if self._prices_fetcher is None:
-            raise TypeError('FinancialData::get_prices requires a PriceFetcher.')
+        if self._daily_prices_fetcher is None:
+            raise TypeError('FinancialData::get_daily_prices requires a PriceFetcher.')
 
-        if self._cache is None:
-            raise TypeError('FinancialData::get_prices requires a Cache.')
+        if self._daily_prices_cache is None:
+            raise TypeError('FinancialData::get_daily_prices requires a Cache.')
 
         # Create a list of dates strings in the format: YYYY-MM-DD
         calendar_date_range = pd.date_range(start_date_str, end_date_str)
         date_list = calendar_date_range.strftime('%Y-%m-%d').tolist()
 
         # Check the cache to make sure it has data for all the dates in the date range
-        missing_dates = self._cache.check_for_missing_dates(ticker, date_list)
+        missing_dates = self._daily_prices_cache.check_for_missing_dates(ticker, date_list)
 
         # If the cache is missing some data, fetch it and add that to the cache.
         if missing_dates:
-            uncached_prices_df = self._prices_fetcher.get_prices(ticker, start_date_str, end_date_str)
-            self._cache.add_prices(ticker, missing_dates, uncached_prices_df)
+            uncached_prices_df = self._daily_prices_fetcher.get_daily_prices(ticker, start_date_str, end_date_str)
+            self._daily_prices_cache.add_daily_prices(ticker, missing_dates, uncached_prices_df)
 
         # Return the prices that have been cached.
-        return self._cache.get_prices(ticker, start_date_str, end_date_str)
+        return self._daily_prices_cache.get_daily_prices(ticker, start_date_str, end_date_str)
 
 
 class FinancialData2(object):

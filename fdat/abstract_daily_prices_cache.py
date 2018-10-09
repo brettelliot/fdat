@@ -1,15 +1,15 @@
 __all__ = [
-    'AbstractCache'
+    'AbstractDailyPricesCache'
 ]
 
 
-class AbstractCache(object):
-    """AbstractCache is the base class for all cache classes.
+class AbstractDailyPricesCache(object):
+    """AbstractDailyPricesCache is the base class for daily price caches.
 
         Derived classes must implement:
             * check_for_missing_dates
-            * add_prices
-            * get_prices
+            * add_daily_prices
+            * get_daily_prices
 
     """
 
@@ -27,10 +27,10 @@ class AbstractCache(object):
                 The dates from the date_list that are not in the cache.
 
         """
-        raise NotImplementedError('AbstractCache is an abstract base class')
+        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')
 
-    def add_prices(self, ticker, missing_dates, uncached_prices_df):
-        """Add the uncached prices to the cache.
+    def add_daily_prices(self, ticker, missing_dates, uncached_prices_df):
+        """Add the uncached daily prices to the cache.
 
         Args:
             ticker (str):
@@ -42,10 +42,10 @@ class AbstractCache(object):
             uncached_prices_df (DataFrame):
                 A DataFrame containing uncached prices that should be added to the cache.
         """
-        raise NotImplementedError('AbstractCache is an abstract base class')
+        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')
 
-    def get_prices(self, ticker, start_date_str, end_date_str=None):
-        """Returns the prices for ticker from the cache as a pandas DataFrame.
+    def get_daily_prices(self, ticker, start_date_str, end_date_str=None):
+        """Returns the daily prices for ticker from the cache as a pandas DataFrame.
 
         Args:
             ticker (str):
@@ -63,4 +63,4 @@ class AbstractCache(object):
                 ``dividend_amt``, ``split_coeff``,
                 ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
         """
-        raise NotImplementedError('AbstractCache is an abstract base class')
+        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')

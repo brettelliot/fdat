@@ -1,11 +1,11 @@
 __all__ = [
-    'AbstractPricesFetcher'
+    'AbstractDailyPricesFetcher'
 ]
 
 
-class AbstractPricesFetcher(object):
+class AbstractDailyPricesFetcher(object):
 
-    def get_prices(self, ticker, start_date_str, end_date_str):
+    def get_daily_prices(self, ticker, start_date_str, end_date_str):
         """Implement this method! Your method should return a pandas DataFrame.
 
         Args:
@@ -25,4 +25,5 @@ class AbstractPricesFetcher(object):
                 ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
 
         """
-        raise NotImplementedError('AbstractPricesFetcher::get_prices is an abstract method and cannot be called.')
+        raise NotImplementedError('AbstractDailyPricesFetcher::get_daily_prices is an abstract method \
+                                    and cannot be called.')

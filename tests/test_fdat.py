@@ -23,17 +23,16 @@ class MockFetcher(ecal.AbstractFetcher):
 """
 
 
-class TestFdatGetPrices(unittest.TestCase):
+class TestFdatGetDailyPrices(unittest.TestCase):
 
     def setUp(self):
         pass
 
-    def test_get_prices_single_date(self):
+    def test_get_daily_prices_single_date(self):
 
         # Given fdat
-        # When we call get_prices with a ticker and a date
-        actual_df = fdat.get_prices('SPY', '2018-08-01')
-        print(actual_df.head())
+        # When we call get_daily_prices with a ticker and a date
+        actual_df = fdat.get_daily_prices('SPY', '2018-08-01')
 
         #actual_df['date'] = actual_df.index
         #print(actual_df.to_dict(orient='list'))
@@ -48,7 +47,6 @@ class TestFdatGetPrices(unittest.TestCase):
         cols = ['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt',
                 'split_coeff', 'adj_open', 'adj_high', 'adj_low', 'adj_close']
         expected_df = expected_df[cols]
-        print(expected_df.head())
 
         # Then we should get a dataframe with all the data back.
         assert_frame_equal(actual_df, expected_df)

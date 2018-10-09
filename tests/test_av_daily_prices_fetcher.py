@@ -2,18 +2,18 @@ import unittest
 import fdat
 
 
-class TestAVPriceFetcher(unittest.TestCase):
+class TestAVDailyPriceFetcher(unittest.TestCase):
 
     def setUp(self):
 
-        self.fetcher = fdat.AVPricesFetcher('../av_config.ini')
+        self.fetcher = fdat.AVDailyPricesFetcher('../av_config.ini')
         pass
 
-    def test_get_prices_single_date(self):
+    def test_get_daily_prices_single_date(self):
 
         # Given fdat
-        # When we call get_prices with a ticker and a date
-        actual_df = self.fetcher.get_prices('SPY', '2018-08-01')
+        # When we call get_daily_prices with a ticker and a date
+        actual_df = self.fetcher.get_daily_prices('SPY', '2018-08-01')
 
         # Then we get a dataframe with the columns we expect
         cols = ['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt',
