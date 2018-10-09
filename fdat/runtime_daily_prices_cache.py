@@ -1,38 +1,36 @@
 import pandas as pd
+from .abstract_daily_prices_cache import AbstractDailyPricesCache
+from typing import List
 
 __all__ = [
-    'AbstractDailyPricesCache'
+    'RuntimeDailyPricesCache'
 ]
 
 
-class AbstractDailyPricesCache(object):
-    """AbstractDailyPricesCache is the base class for daily price caches.
+class RuntimeDailyPricesCache(AbstractDailyPricesCache):
+    """The ``RuntimeDailyPricesCache`` will cache daily price data for the program's lifetime."""
 
-        Derived classes must implement:
-            * check_for_missing_dates
-            * add_daily_prices
-            * get_daily_prices
+    def __init__(self):
+        pass
 
-    """
-
-    def check_for_missing_dates(self, ticker, date_list):
-        """Look in the cache for dates and return the dates that aren't in the cache.
+    def check_for_missing_dates(self, ticker: str, dates: List[str]) -> List[str]:
+        """Given a list of dates, find any that aren't already cached.
 
         Args:
             ticker (str):
                 The ticker symbol of the stock we are checking for.
-            date_list (list):
+            dates (list):
                 The list of dates to check the cache for.
 
         Returns:
-            list:
+            list[str]:
                 The dates from the date_list that are not in the cache.
 
         """
-        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')
+        pass
 
     def add_daily_prices(self, ticker, missing_dates, uncached_prices_df):
-        """Add the uncached daily prices to the cache.
+        """Just store the prices so that the next call to ``get_daily_prices`` will use them.
 
         Args:
             ticker (str):
@@ -44,7 +42,7 @@ class AbstractDailyPricesCache(object):
             uncached_prices_df (DataFrame):
                 A DataFrame containing uncached prices that should be added to the cache.
         """
-        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')
+        self._no_cache_df = uncached_prices_df
 
     def get_daily_prices(self, ticker: str, start_date: str, end_date: str = None) -> pd.DataFrame:
         """Returns a DataFrame containing daily price data for the stock over the date range.
@@ -65,4 +63,7 @@ class AbstractDailyPricesCache(object):
                 ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
 
         """
-        raise NotImplementedError('AbstractDailyPricesCache is an abstract base class')
+        if end_date is None:
+            end_date = start_date
+
+        return self._no_cache_df[start_date:end_date]

@@ -1,4 +1,5 @@
 from .abstract_daily_prices_cache import AbstractDailyPricesCache
+import pandas as pd
 
 __all__ = [
     'NoDailyPricesCache'
@@ -48,26 +49,26 @@ class NoDailyPricesCache(AbstractDailyPricesCache):
         """
         self._no_cache_df = uncached_prices_df
 
-    def get_daily_prices(self, ticker, start_date_str, end_date_str=None):
-        """Returns exactly what was passed into the last call to ``add_daily_prices``
+    def get_daily_prices(self, ticker: str, start_date: str, end_date: str = None) -> pd.DataFrame:
+        """Returns a DataFrame containing daily price data for the stock over the date range.
 
         Args:
             ticker (str):
-                The ticker symbol of the stock we are getting data for.
-            start_date_str (str):
-                The start date of data we want in the format ``YYYY-MM-DD``.
-            end_date_str (str):
-                The end date data we want in the format ``YYYY-MM-DD``.
-                If left out, we will fetch only data for the start date.
+                The ticker symbol of the stock to get prices for.
+            start_date (str):
+                The start date in the format "YYYY-MM-DD".
+            end_date (str):
+                The end date in the format "YYYY-MM-DD". If left out, only prices for the start_date will be returned.
 
         Returns:
             DataFrame:
-                Returns a pandas DataFrame indexed by ``date``, that has columns:
+                A pandas DataFrame indexed by ``date``, that has columns:
                 ``ticker``, ``open``, ``high``, ``low``, ``close``,
                 ``dividend_amt``, ``split_coeff``,
                 ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
-        """
-        if end_date_str is None:
-            end_date_str = start_date_str
 
-        return self._no_cache_df[start_date_str:end_date_str]
+        """
+        if end_date is None:
+            end_date = start_date
+
+        return self._no_cache_df[start_date:end_date]

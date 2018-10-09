@@ -10,6 +10,10 @@ __all__ = [
 
 
 class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
+    """The AVDailyPricesFetcher gets daily price data from AlphaVantage.
+
+    AV is rate limited and this fetcher throttles calls to their API to prevent being rate limited.
+    """
 
     def __init__(self, config_file_path):
         self._last_call_time = 0

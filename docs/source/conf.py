@@ -194,5 +194,8 @@ epub_exclude_files = ['search.html']
 
 exclude_patterns = ['modules.rst', 'ecal.rst']
 
+# If true, the current module name will be prepended to all description
+# unit titles (such as .. function::).
+add_module_names = False
 
 # -- Extension configuration -------------------------------------------------

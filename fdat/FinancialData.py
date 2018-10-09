@@ -12,9 +12,7 @@ _default_daily_prices_fetcher = AVDailyPricesFetcher('../av_config.ini')
 
 
 class FinancialData(object):
-    """The FinancialData class is gateway to data from all the configured fetchers.
-
-    """
+    """The FinancialData class is gateway to data from all the configured fetchers."""
 
     def __init__(self, daily_prices_cache=None, daily_prices_fetcher=None):
         if daily_prices_cache is not None:
@@ -39,10 +37,28 @@ class FinancialData(object):
         else:
             raise TypeError('FinancialData::get_daily_prices requires a PriceFetcher.')
 
-    def get_daily_prices(self, ticker, start_date_str, end_date_str):
+    def get_daily_prices(self, ticker: str, start_date: str, end_date: str = None) -> pd.DataFrame:
+        """Returns a DataFrame containing daily price data for the stock over the date range.
 
-        if end_date_str is None:
-            end_date_str = start_date_str
+        Args:
+            ticker (str):
+                The ticker symbol of the stock to get prices for.
+            start_date (str):
+                The start date in the format "YYYY-MM-DD".
+            end_date (str):
+                The end date in the format "YYYY-MM-DD". If left out, only prices for the start_date will be returned.
+
+        Returns:
+            DataFrame:
+                A pandas DataFrame indexed by ``date``, that has columns:
+                ``ticker``, ``open``, ``high``, ``low``, ``close``,
+                ``dividend_amt``, ``split_coeff``,
+                ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
+
+        """
+
+        if end_date is None:
+            end_date = start_date
 
         if self._daily_prices_fetcher is None:
             raise TypeError('FinancialData::get_daily_prices requires a PriceFetcher.')
@@ -51,7 +67,7 @@ class FinancialData(object):
             raise TypeError('FinancialData::get_daily_prices requires a Cache.')
 
         # Create a list of dates strings in the format: YYYY-MM-DD
-        calendar_date_range = pd.date_range(start_date_str, end_date_str)
+        calendar_date_range = pd.date_range(start_date, end_date)
         date_list = calendar_date_range.strftime('%Y-%m-%d').tolist()
 
         # Check the cache to make sure it has data for all the dates in the date range
@@ -59,11 +75,11 @@ class FinancialData(object):
 
         # If the cache is missing some data, fetch it and add that to the cache.
         if missing_dates:
-            uncached_prices_df = self._daily_prices_fetcher.get_daily_prices(ticker, start_date_str, end_date_str)
+            uncached_prices_df = self._daily_prices_fetcher.get_daily_prices(ticker, start_date, end_date)
             self._daily_prices_cache.add_daily_prices(ticker, missing_dates, uncached_prices_df)
 
         # Return the prices that have been cached.
-        return self._daily_prices_cache.get_daily_prices(ticker, start_date_str, end_date_str)
+        return self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
 
 
 class FinancialData2(object):

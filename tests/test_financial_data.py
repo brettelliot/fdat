@@ -1,38 +1,20 @@
 import unittest
-import fdat
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
-import datetime
+import fdat
 
 
-"""
-class MockFetcher(ecal.AbstractFetcher):
-
-    def __init__(self):
-        sample_dict = {'ticker': ['CMC', 'LNDC', 'NEOG', 'RAD', 'RECN', 'UNF'],
-                         'when': ['bmo', 'amc', 'bmo', 'amc', 'amc', 'bmo'],
-                         'date': ['2018-01-04', '2018-01-04', '2018-01-04', '2018-01-04', '2018-01-04', '2018-01-04']}
-
-        sample_df = pd.DataFrame.from_dict(sample_dict)
-        sample_df = sample_df.set_index('date')
-        sample_df = sample_df[['ticker', 'when']]
-        self.calendar_df = sample_df
-
-    def fetch_calendar(self, start_date_str, end_date_str=None):
-        return self.calendar_df
-"""
-
-
-class TestFdatGetDailyPrices(unittest.TestCase):
+class TestFinancialData(unittest.TestCase):
 
     def setUp(self):
-        pass
 
-    def test_get_daily_prices_single_date(self):
+        # Given an instance of FinancialData with the default cache and fetchers
+        self.fd = fdat.FinancialData()
 
-        # Given fdat
+    def test_default_get_daily_prices_single_date(self):
+
         # When we call get_daily_prices with a ticker and a date
-        actual_df = fdat.get_daily_prices('SPY', '2018-08-01')
+        actual_df = self.fd.get_daily_prices('SPY', '2018-08-01')
 
         #actual_df['date'] = actual_df.index
         #print(actual_df.to_dict(orient='list'))
