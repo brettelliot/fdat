@@ -2,6 +2,7 @@ import unittest
 import fdat
 import time
 import pandas as pd
+import datetime
 
 
 class MockRuntimeDailyPricesCache(fdat.RuntimeDailyPricesCache):
@@ -14,7 +15,7 @@ class MockRuntimeDailyPricesCache(fdat.RuntimeDailyPricesCache):
         self._key_set = {'2018-08-01,SPY'}
 
         # Seed the cache with some data
-        data = {'date': ['2018-08-01'],
+        data = {'date': [datetime.datetime.strptime('2018-08-01', '%Y-%m-%d')],
                 'ticker': ['SPY'],
                 'open': [281.56],
                 'high': [282.13],
@@ -37,7 +38,6 @@ class TestRuntimeDailyPricesCache(unittest.TestCase):
     def setUp(self):
         pass
 
-    @unittest.skip("Skipping test_first_call_is_slow_and_second_call_is_fast")
     def test_first_call_is_slow_and_second_call_is_fast(self):
         fdat.set_daily_prices_cache(fdat.RuntimeDailyPricesCache())
         ticker = 'SPY'
@@ -53,7 +53,7 @@ class TestRuntimeDailyPricesCache(unittest.TestCase):
         prices_df = fdat.get_daily_prices(ticker, date)
         self.assertFalse(prices_df.empty)
         call_time = time.time() - pre_call_time
-        self.assertTrue(call_time > 1.0)
+        self.assertTrue(call_time < 1.0)
 
     def test_check_for_missing_dates_that_are_in_the_cache(self):
 
@@ -88,7 +88,8 @@ class TestRuntimeDailyPricesCache(unittest.TestCase):
 
         # When we add some new pricing data to the cache
         ticker = 'SPY'
-        date = '2018-08-02'
+        date_str = '2018-08-02'
+        date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
         data = {'date': [date],
                 'ticker': [ticker],
                 'open': [300.00],
@@ -107,16 +108,29 @@ class TestRuntimeDailyPricesCache(unittest.TestCase):
         uncached_prices_df = pd.DataFrame(data).set_index(['date'])
 
         assert('2018-08-02,SPY' not in cache._key_set)
-        cache.add_daily_prices(ticker, [date], uncached_prices_df)
+        cache.add_daily_prices(ticker, [date_str], uncached_prices_df)
 
-        # Then it's added to the _cache_df and the _key_set
+        # Then it's added to the _cache_df
         self.assertEqual(len(cache._cache_df), 2)
-        assert('2018-08-02,SPY' in cache._key_set)
         new_row = cache._cache_df.loc[(cache._cache_df['date'] == '2018-08-02') & (cache._cache_df['ticker'] == 'SPY')]
         self.assertEqual(new_row.at[0, 'open'], 300.00)
         self.assertEqual(new_row.at[0, 'adj_close'], 350.00)
 
+        # And it's added to the _key_set
+        assert ('2018-08-02,SPY' in cache._key_set)
 
+    def test_get_daily_prices(self):
+
+        # Given a cache with some data
+        cache = MockRuntimeDailyPricesCache()
+
+        # When asked to provide the prices data for a date
+        prices_df = cache.get_daily_prices('SPY', '2018-08-01')
+
+        # Then the pricing date is returned in a DataFrame indexed by date
+        self.assertEqual(len(prices_df), 1)
+        self.assertEqual(prices_df.loc['2018-08-01', 'adj_close'], 279.5936)
+        self.assertEqual(prices_df.loc['2018-08-01', 'close'], 280.86)
 
 
 if __name__ == '__main__':

@@ -70,7 +70,7 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
             new_keys.append(new_key)
 
         for date in uncached_prices_df['date'].tolist():
-            new_key = date + ',' + ticker
+            new_key = date.strftime('%Y-%m-%d') + ',' + ticker
             new_keys.append(new_key)
 
         # add all the dates to the index set
@@ -101,4 +101,8 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
         if end_date is None:
             end_date = start_date
 
-        pass
+        prices_df = self._cache_df.set_index(['date'])
+        prices_df = prices_df.loc[start_date: end_date]
+        prices_df = prices_df.loc[(prices_df['ticker'] == ticker)]
+        return prices_df
+

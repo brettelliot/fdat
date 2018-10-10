@@ -77,7 +77,8 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
 
             # add a column for the date and ticker
             df['ticker'] = ticker
-            df.index = pd.to_datetime(df.index)
+            df.index = pd.to_datetime(df.index, format='%Y-%m-%d')
+            df.index.name = 'date'
 
             # The columns we get back from AV are:
             # ['1. open', '2. high', '3. low', '4. close',

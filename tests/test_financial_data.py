@@ -33,6 +33,7 @@ class TestFinancialData(unittest.TestCase):
                          'adj_close': [279.5936]}
         expected_df = pd.DataFrame.from_dict(expected_dict)
         expected_df.index = pd.to_datetime(['2018-08-01'])
+        expected_df.index.name = 'date'
         cols = ['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt',
                 'split_coeff', 'adj_open', 'adj_high', 'adj_low', 'adj_close']
         expected_df = expected_df[cols]
