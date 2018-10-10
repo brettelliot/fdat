@@ -20,10 +20,17 @@ class TestFinancialData(unittest.TestCase):
         #print(actual_df.to_dict(orient='list'))
 
         expected_dict = {'ticker': ['SPY'],
-                         'open': [281.56], 'high': [282.13], 'low': [280.1315], 'close': [280.86],
-                         'volume': [53853326], 'dividend_amt': [0.0], 'split_coeff': [1.0],
-                         'adj_open': [280.2904], 'adj_high': [280.8579],
-                         'adj_low': [278.8684], 'adj_close': [279.5936]}
+                         'open': [281.56],
+                         'high': [282.13],
+                         'low': [280.1315],
+                         'close': [280.86],
+                         'volume': [53853326],
+                         'dividend_amt': [0.0],
+                         'split_coeff': [1.0],
+                         'adj_open': [280.2904],
+                         'adj_high': [280.8579],
+                         'adj_low': [278.8684],
+                         'adj_close': [279.5936]}
         expected_df = pd.DataFrame.from_dict(expected_dict)
         expected_df.index = pd.to_datetime(['2018-08-01'])
         cols = ['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt',

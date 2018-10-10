@@ -11,7 +11,25 @@ class MockRuntimeDailyPricesCache(fdat.RuntimeDailyPricesCache):
         super().__init__()
 
         # Seed the cache with some data
-        self._keys_df = self._keys_df.append({'keys': '2018-08-01,SPY'}, ignore_index=True)
+        self._key_set = {'2018-08-01,SPY'}
+
+        # Seed the cache with some data
+        data = {'date': ['2018-08-01'],
+                'ticker': ['SPY'],
+                'open': [281.56],
+                'high': [282.13],
+                'low': [280.1315],
+                'close': [280.86],
+                'volume': [53853326],
+                'dividend_amt': [0.0],
+                'split_coeff': [1.0],
+                'adj_open': [280.2904],
+                'adj_high': [280.8579],
+                'adj_low': [278.8684],
+                'adj_close': [279.5936]
+                }
+
+        self._cache_df = pd.DataFrame(data)
 
 
 class TestRuntimeDailyPricesCache(unittest.TestCase):
@@ -62,6 +80,41 @@ class TestRuntimeDailyPricesCache(unittest.TestCase):
         # Then we shouldn't find them and they should be returned back to us as a missing date
         expected = ['2018-08-31']
         self.assertListEqual(actual, expected)
+
+    def test_add_daily_prices(self):
+
+        # Given a RuntimeDailyPricesCache
+        cache = MockRuntimeDailyPricesCache()
+
+        # When we add some new pricing data to the cache
+        ticker = 'SPY'
+        date = '2018-08-02'
+        data = {'date': [date],
+                'ticker': [ticker],
+                'open': [300.00],
+                'high': [400.00],
+                'low': [200.00],
+                'close': [350.00],
+                'volume': [66666666],
+                'dividend_amt': [0.0],
+                'split_coeff': [1.0],
+                'adj_open': [300.00],
+                'adj_high': [400.00],
+                'adj_low': [200.00],
+                'adj_close': [350.00]
+                }
+
+        uncached_prices_df = pd.DataFrame(data).set_index(['date'])
+
+        assert('2018-08-02,SPY' not in cache._key_set)
+        cache.add_daily_prices(ticker, [date], uncached_prices_df)
+
+        # Then it's added to the _cache_df and the _key_set
+        self.assertEqual(len(cache._cache_df), 2)
+        assert('2018-08-02,SPY' in cache._key_set)
+        new_row = cache._cache_df.loc[(cache._cache_df['date'] == '2018-08-02') & (cache._cache_df['ticker'] == 'SPY')]
+        self.assertEqual(new_row.at[0, 'open'], 300.00)
+        self.assertEqual(new_row.at[0, 'adj_close'], 350.00)
 
 
 
