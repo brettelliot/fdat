@@ -79,7 +79,12 @@ class FinancialData(object):
             self._daily_prices_cache.add_daily_prices(ticker, missing_dates, uncached_prices_df)
 
         # Return the prices that have been cached.
-        return self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
+        df = self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
+
+        # reorder the columns ticker first
+        df = df[['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt', 'split_coeff',
+                 'adj_open', 'adj_high', 'adj_low', 'adj_close']]
+        return df
 
 
 class FinancialData2(object):
