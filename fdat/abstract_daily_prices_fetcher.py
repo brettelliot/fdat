@@ -1,3 +1,5 @@
+import fdat
+
 __all__ = [
     'AbstractDailyPricesFetcher'
 ]
@@ -6,7 +8,10 @@ __all__ = [
 class AbstractDailyPricesFetcher(object):
 
     def get_daily_prices(self, ticker, start_date_str, end_date_str):
-        """Implement this method! Your method should return a pandas DataFrame.
+        """Implement this method in derived classes.
+
+        In the derived class use fdata.utils.validate_standard_prices_dataframe() to ensure the DataFrame
+        being returned by get_daily_prices() is valid.
 
         Args:
             ticker (str):
@@ -19,11 +24,9 @@ class AbstractDailyPricesFetcher(object):
 
         Returns:
             DataFrame:
-                Returns a pandas DataFrame indexed by ``date``, that has columns:
-                ``ticker``, ``open``, ``high``, ``low``, ``close``,
-                ``dividend_amt``, ``split_coeff``,
-                ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
+                Returns a valid standard prices DataFrame.
+
 
         """
-        raise NotImplementedError('AbstractDailyPricesFetcher::get_daily_prices is an abstract method \
+        raise NotImplementedError('AbstractDailyPricesFetcher::_get_daily_prices is an abstract method \
                                     and cannot be called.')

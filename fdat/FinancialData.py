@@ -4,8 +4,9 @@ import requests
 import configparser
 import time
 import tempfile
-from .av_daily_prices_fetcher import AVDailyPricesFetcher
+import fdat
 from .no_daily_prices_cache import NoDailyPricesCache
+from .av_daily_prices_fetcher import AVDailyPricesFetcher
 
 _default_daily_prices_cache = NoDailyPricesCache()
 _default_daily_prices_fetcher = AVDailyPricesFetcher('../av_config.ini')
@@ -70,21 +71,26 @@ class FinancialData(object):
         calendar_date_range = pd.date_range(start_date, end_date)
         date_list = calendar_date_range.strftime('%Y-%m-%d').tolist()
 
-        # Check the cache to make sure it has data for all the dates in the date range
-        missing_dates = self._daily_prices_cache.check_for_missing_dates(ticker, date_list)
+        try:
+            # Check the cache to make sure it has data for all the dates in the date range
+            missing_dates = self._daily_prices_cache.check_for_missing_dates(ticker, date_list)
 
-        # If the cache is missing some data, fetch it and add that to the cache.
-        if missing_dates:
-            uncached_prices_df = self._daily_prices_fetcher.get_daily_prices(ticker, start_date, end_date)
-            self._daily_prices_cache.add_daily_prices(ticker, missing_dates, uncached_prices_df)
+            # If the cache is missing some data, fetch it and add that to the cache.
+            if missing_dates:
+                uncached_prices_df = self._daily_prices_fetcher.get_daily_prices(ticker, start_date, end_date)
+                fdat.utils.validate_standard_prices_dataframe(uncached_prices_df)
+                self._daily_prices_cache.add_daily_prices(ticker, missing_dates, uncached_prices_df)
 
-        # Return the prices that have been cached.
-        df = self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
+            # Return the prices that have been cached.
+            df = self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
 
-        # reorder the columns ticker first
-        df = df[['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt', 'split_coeff',
-                 'adj_open', 'adj_high', 'adj_low', 'adj_close']]
-        return df
+            # reorder the columns ticker first
+            df = df[['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt', 'split_coeff',
+                     'adj_open', 'adj_high', 'adj_low', 'adj_close']]
+            return df
+        except Exception as e:
+            print('FinancialData.get_daily_prices() raised an exception:\n{}'.format(e))
+            return None
 
 
 class FinancialData2(object):
