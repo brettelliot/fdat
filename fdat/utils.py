@@ -1,13 +1,28 @@
 import pandas as pd
 import numpy as np
+from typing import List
 
 __all__ = [
-    'validate_standard_prices_dataframe'
+    'validate_standard_prices_dataframe',
+    'standard_prices_dataframe_column_order'
 ]
 
 
-def validate_standard_prices_dataframe(prices_df: pd.DataFrame):
-    """Raises an exception if the prices_df doesn't have the right columns or types.
+def standard_prices_dataframe_column_order() -> List[str]:
+    """Returns the list of columns in the standard prices DataFrame.
+
+    Returns:
+        list:
+            The list of columns in the standard prices DataFrame.
+
+    """
+    cols = ['date', 'symbol', 'open', 'high', 'low', 'close', 'dividend_amt', 'split_coeff', 'adj_open', 'adj_high',
+            'adj_low', 'adj_close', 'volume', 'timezone']
+    return cols
+
+
+def validate_standard_prices_dataframe(prices_df: pd.DataFrame) -> None:
+    """Raises an exception if the ``prices_df`` doesn't have the right columns or types.
 
     Args:
         prices_df (DataFrame):
@@ -16,10 +31,10 @@ def validate_standard_prices_dataframe(prices_df: pd.DataFrame):
     Returns:
         None
 
-    A valid dataframe looks like this:
+    A valid standard prices dataframe looks like this:
 
     =============== =========
-    Column name     type
+    Column name     Type
     =============== =========
     date            object
     symbol          object

@@ -85,8 +85,8 @@ class FinancialData(object):
             df = self._daily_prices_cache.get_daily_prices(ticker, start_date, end_date)
 
             # reorder the columns ticker first
-            df = df[['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt', 'split_coeff',
-                     'adj_open', 'adj_high', 'adj_low', 'adj_close']]
+            cols = fdat.standard_prices_dataframe_column_order()
+            df = df[cols]
             return df
         except Exception as e:
             print('FinancialData.get_daily_prices() raised an exception:\n{}'.format(e))

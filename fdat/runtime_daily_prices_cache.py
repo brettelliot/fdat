@@ -23,11 +23,11 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
         self._cache_df = pd.DataFrame(columns=col_names)
         #self._cache_df = self._cache_df.set_index(['date', 'ticker'])
 
-    def check_for_missing_dates(self, ticker: str, dates: List[str]) -> List[str]:
+    def check_for_missing_dates(self, symbol: str, dates: List[str]) -> List[str]:
         """Given a list of dates, find any that aren't already cached.
 
         Args:
-            ticker (str):
+            symbol (str):
                 The ticker symbol of the stock we are checking for.
             dates (list):
                 The list of dates to check the cache for.
@@ -39,17 +39,17 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
         """
         missing_dates_list = []
         for date in dates:
-            key = date + ',' + ticker
+            key = date + ',' + symbol
             if key not in self._key_set:
                 missing_dates_list.append(date)
 
         return missing_dates_list
 
-    def add_daily_prices(self, ticker: str, missing_dates: List[str], uncached_prices_df: pd.DataFrame) -> None:
+    def add_daily_prices(self, symbol: str, missing_dates: List[str], uncached_prices_df: pd.DataFrame) -> None:
         """Cache the daily prices.
 
         Args:
-            ticker (str):
+            symbol (str):
                 The ticker symbol of the stock we are adding to the cache
             missing_dates (list):
                 The dates that were fetched and should be added to the cache index. Even dates that have no data
@@ -66,11 +66,11 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
         new_keys = []
 
         for date in missing_dates:
-            new_key = date + ',' + ticker
+            new_key = date + ',' + symbol
             new_keys.append(new_key)
 
         for date in uncached_prices_df['date'].tolist():
-            new_key = date.strftime('%Y-%m-%d') + ',' + ticker
+            new_key = date.strftime('%Y-%m-%d') + ',' + symbol
             new_keys.append(new_key)
 
         # add all the dates to the index set
@@ -79,11 +79,11 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
         # Add the uncached prices to the cache
         self._cache_df = pd.concat([self._cache_df, uncached_prices_df])
 
-    def get_daily_prices(self, ticker: str, start_date: str, end_date: str = None) -> pd.DataFrame:
+    def get_daily_prices(self, symbol: str, start_date: str, end_date: str = None) -> pd.DataFrame:
         """Returns a DataFrame containing daily price data for the stock over the date range.
 
         Args:
-            ticker (str):
+            symbol (str):
                 The ticker symbol of the stock to get prices for.
             start_date (str):
                 The start date in the format "YYYY-MM-DD".
@@ -103,6 +103,6 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
 
         prices_df = self._cache_df.set_index(['date'])
         prices_df = prices_df.loc[start_date: end_date]
-        prices_df = prices_df.loc[(prices_df['ticker'] == ticker)]
+        prices_df = prices_df.loc[(prices_df['symbol'] == symbol)]
         return prices_df
 

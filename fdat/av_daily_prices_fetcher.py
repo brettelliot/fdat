@@ -27,7 +27,7 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
         config.read(config_file_path)
         self._av_api_key = config['AV']['AV_API_KEY']
 
-    def get_daily_prices(self, symbol, start_date_str, end_date_str=None):
+    def get_daily_prices(self, symbol: str, start_date: str, end_date: str =None) -> pd.DataFrame:
         """Get prices from AlphaVantage as a pandas DataFrame.
 
         AlphaVantage returns all prices from 1/1/2000 (if available) in one shot. Therefore
@@ -36,9 +36,9 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
         Args:
             symbol (str):
                 The ticker symbol
-            start_date_str (str):
+            start_date (str):
                 Ignored, since AlphaVantage returns everything.
-            end_date_str (str):
+            end_date (str):
                 Ignored, since AlphaVantage returns everything.
 
         Returns:
@@ -65,7 +65,7 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
 
         self._last_call_time = time.time()
 
-        cleaned_symbol = self._clean_ticker(symbol)
+        cleaned_symbol = self._clean_symbol(symbol)
 
         payload = {'apikey': self._av_api_key, 'symbol': cleaned_symbol,
                    'function': 'TIME_SERIES_DAILY_ADJUSTED', 'outputsize': 'full'}
@@ -102,7 +102,7 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
         return df
 
     @staticmethod
-    def _clean_ticker(symbol):
+    def _clean_symbol(symbol):
         """Returns a cleaned up version of the stock ticker that works with Alpha Vantage
 
         Args:
@@ -114,8 +114,8 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
                 A cleaned stock ticker that works with AlphaVantage
         """
 
-        cleaned_ticker = symbol.replace('.', '-')
-        return cleaned_ticker
+        cleaned_symbol = symbol.replace('.', '-')
+        return cleaned_symbol
 
     @staticmethod
     def _adjust(df):
@@ -136,9 +136,8 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
         df['adj_high'] = df['adj_close'] / df['close'] * df['high']
         df['adj_low'] = df['adj_close'] / df['close'] * df['low']
 
-        # reorder the columns ticker first
-        cols = ['date', 'symbol', 'open', 'high', 'low', 'close', 'dividend_amt', 'split_coeff', 'adj_open', 'adj_high',
-                'adj_low', 'adj_close', 'volume', 'timezone']
+        # reorder the columns
+        cols = fdat.standard_prices_dataframe_column_order()
         df = df[cols]
 
         # Prior to this call all the columns were object type for some reason.

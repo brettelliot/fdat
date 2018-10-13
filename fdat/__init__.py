@@ -15,19 +15,21 @@ __all__ = [
     'get_daily_prices',
     'set_daily_prices_cache',
     'set_daily_prices_fetcher',
+    'validate_standard_prices_dataframe',
+    'standard_prices_dataframe_column_order',
     'AbstractDailyPricesFetcher',
     'AVDailyPricesFetcher',
     'AbstractDailyPricesCache',
     'NoDailyPricesCache',
-    'RuntimeDailyPricesCache'
+    'RuntimeDailyPricesCache',
 ]
 
 
-def get_daily_prices(ticker: str, start_date: str, end_date: str=None) -> pd.DataFrame:
+def get_daily_prices(symbol: str, start_date: str, end_date: str=None) -> pd.DataFrame:
     """Returns a DataFrame containing daily price data for the stock over the date range.
 
     Args:
-        ticker (str):
+        symbol (str):
             The ticker symbol of the stock to get prices for.
         start_date (str):
             The start date in the format "YYYY-MM-DD".
@@ -46,7 +48,7 @@ def get_daily_prices(ticker: str, start_date: str, end_date: str=None) -> pd.Dat
     if end_date is None:
         end_date = start_date
 
-    return _financial_data.get_daily_prices(ticker, start_date, end_date)
+    return _financial_data.get_daily_prices(symbol, start_date, end_date)
 
 
 def set_daily_prices_cache(cache: AbstractDailyPricesCache) -> None:
