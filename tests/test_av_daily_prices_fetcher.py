@@ -24,7 +24,15 @@ class TestAVDailyPriceFetcher(unittest.TestCase):
         # And it's got a lot of rows
         self.assertTrue(len(actual_df.index) > 4000)
 
-        # And a random inspection of a certain date gets us the right data
+        # Inspect the data we get back. First using a query method:
+        actual = actual_df.query('date == "2018-08-01" & symbol == "SPY"')['open'].item()
+        self.assertEqual(actual, 281.56)
+
+        # Next using variable attributes
+        actual = actual_df[(actual_df['date']=='2018-08-01') & (actual_df['symbol']=='SPY')]['high'].item()
+        self.assertEqual(actual, 282.13)
+
+        # and finally using the cleanest method... resetting the index
         actual_df = actual_df.set_index(['date', 'symbol'])
         self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['open'], 281.56)
         self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['high'], 282.13)
@@ -37,6 +45,7 @@ class TestAVDailyPriceFetcher(unittest.TestCase):
         self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['adj_high'], 280.8579)
         self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['adj_low'], 278.8684)
         self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['adj_close'], 279.5936)
+        self.assertEqual(actual_df.loc['2018-08-01', 'SPY']['timezone'], 'US/Eastern')
 
 
 if __name__ == '__main__':

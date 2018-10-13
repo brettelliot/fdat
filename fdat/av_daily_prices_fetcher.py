@@ -73,11 +73,12 @@ class AVDailyPricesFetcher(AbstractDailyPricesFetcher):
 
         try:
             json_dict = response.json()
+            timezone = json_dict['Meta Data']['5. Time Zone']
             df = pd.DataFrame.from_dict(json_dict['Time Series (Daily)'], orient="index")
 
             # add a column for the date and symbol
             df['symbol'] = symbol
-            df['timezone'] = 'tz'
+            df['timezone'] = timezone
             df.index.name = 'date'
             df = df.reset_index()
 
