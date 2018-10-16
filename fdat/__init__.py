@@ -39,9 +39,10 @@ def get_daily_prices(symbol: str, start_date: str, end_date: str=None) -> pd.Dat
     Returns:
         DataFrame:
             A pandas DataFrame indexed by ``date``, that has columns:
-            ``ticker``, ``open``, ``high``, ``low``, ``close``,
+            ``symbol``, ``open``, ``high``, ``low``, ``close``,
             ``dividend_amt``, ``split_coeff``,
-            ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``.
+            ``adj_open``, ``adj_high``, ``adj_low``, and ``adj_close``,
+            ``volume``, and ``timezone``.
 
     """
 

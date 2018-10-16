@@ -15,7 +15,7 @@ class RuntimeDailyPricesCache(AbstractDailyPricesCache):
     def __init__(self):
 
         # Create the set containing keys that represent dates that data exists for a certain stock.
-        # The keys will be a string in the format: ``YYYY-MM-DD,ticker`` such as ``2018-08-01,SPY``
+        # The keys will be a string in the format: ``YYYY-MM-DD,symbol`` such as ``2018-08-01,SPY``
         self._keys = set()
 
         # Create the cache that will hold the price data

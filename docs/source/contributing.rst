@@ -8,11 +8,9 @@ The vision for ``fdat`` is to be a drop in replacement for ``pandas_datareader``
 
 #. I want to download financial data once and use it repeatedly even offline. I've been unsuccessful at getting the requests caches to work in this way.
 
-#. I've found it necessary to switch to a historical price source like AlphaVantage when the yahoo and google readers failed and I didn't find any documentation to add my own ``pandas_datareader``. I know there is an AV reader now, but
-this will probably happen again and I'd like to be able to easily create my own readers when needed.
+#. I've found it necessary to switch to a historical price source like AlphaVantage when the yahoo and google readers failed and I didn't find any documentation to add my own ``pandas_datareader``. I know there is an AV reader now, but this will probably happen again and I'd like to be able to easily create my own readers when needed.
 
 #. I needed to auto adjust the OHLC values returned by AV.
-
 
 
 Therefore, if possible, I've tried to keep the interface for ``fdat`` as similar as possible to the corresponding ``pandas_datareader`` interface without doing more than I need. For example, at the moment I only need to pull data for one ticker at a time so I haven't implemented the ticker list and returning a multiindex dataframe. It's easy so if you want to contribute, please go ahead :)

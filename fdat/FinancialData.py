@@ -87,6 +87,10 @@ class FinancialData(object):
             # reorder the columns ticker first
             cols = fdat.standard_prices_dataframe_column_order()
             df = df[cols]
+
+            # Convert date into datetimeindex and drop date column
+            df = df.set_index(pd.to_datetime(df['date']))
+            df = df.drop(['date'], axis=1)
             return df
         except Exception as e:
             print('FinancialData.get_daily_prices() raised an exception:\n{}'.format(e))
