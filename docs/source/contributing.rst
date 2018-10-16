@@ -1,6 +1,23 @@
 ============
 Contributing
 ============
+
+Vision
+------
+The vision for ``fdat`` is to be a drop in replacement for ``pandas_datareader`` BUT only if the situation arises. There are two situations that have come up for me that caused me to create ``fdat``:
+
+#. I want to download financial data once and use it repeatedly even offline. I've been unsuccessful at getting the requests caches to work in this way.
+
+#. I've found it necessary to switch to a historical price source like AlphaVantage when the yahoo and google readers failed and I didn't find any documentation to add my own ``pandas_datareader``. I know there is an AV reader now, but this will probably happen again and I'd like to be able to easily create my own readers when needed.
+
+#. I needed to auto adjust the OHLC values returned by AV.
+
+
+Therefore, if possible, I've tried to keep the interface for ``fdat`` as similar as possible to the corresponding ``pandas_datareader`` interface without doing more than I need. For example, at the moment I only need to pull data for one ticker at a time so I haven't implemented the ticker list and returning a multiindex dataframe. It's easy so if you want to contribute, please go ahead :)
+
+Github
+------
+
 This repo uses the `Git Branching Model <https://nvie.com/posts/a-successful-git-branching-model/>`_. The head of master branch should always be production ready. The head of the develop branch should contain the latest delivered development changes for the next release. Features should be created in feature branches that branch from the develop branch.
 
 Create virtualenv (recommended, but not required). Then get the repo::

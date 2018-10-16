@@ -19,23 +19,24 @@ class TestFinancialData(unittest.TestCase):
         #actual_df['date'] = actual_df.index
         #print(actual_df.to_dict(orient='list'))
 
-        expected_dict = {'ticker': ['SPY'],
+        expected_dict = {'symbol': ['SPY'],
                          'open': [281.56],
                          'high': [282.13],
                          'low': [280.1315],
                          'close': [280.86],
-                         'volume': [53853326],
                          'dividend_amt': [0.0],
                          'split_coeff': [1.0],
                          'adj_open': [280.2904],
                          'adj_high': [280.8579],
                          'adj_low': [278.8684],
-                         'adj_close': [279.5936]}
+                         'adj_close': [279.5936],
+                         'volume': [53853326],
+                         'timezone': ['US/Eastern']}
         expected_df = pd.DataFrame.from_dict(expected_dict)
         expected_df.index = pd.to_datetime(['2018-08-01'])
         expected_df.index.name = 'date'
-        cols = ['ticker', 'open', 'high', 'low', 'close', 'volume', 'dividend_amt',
-                'split_coeff', 'adj_open', 'adj_high', 'adj_low', 'adj_close']
+        cols = ['symbol', 'open', 'high', 'low', 'close', 'dividend_amt',
+                'split_coeff', 'adj_open', 'adj_high', 'adj_low', 'adj_close', 'volume', 'timezone']
         expected_df = expected_df[cols]
 
         # Then we should get a dataframe with all the data back.
